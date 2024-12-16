@@ -1,1 +1,6 @@
 *__pycache__*
+
+dataset/Cifar10
+dataset/Cifar100
+
+outputs

@@ -1,3 +1,5 @@
+# fmt: off
+
 # PFLlib: Personalized Federated Learning Algorithm Library
 # Copyright (C) 2021  Jianqing Zhang
 
@@ -49,6 +51,11 @@ class FedAvg(Server):
 
             for client in self.selected_clients:
                 client.train()
+                
+            if i % self.eval_gap == 0:
+                print(f"\n-------------Round number: {i}-------------")
+                print("\nEvaluate fine-tuned local model")
+                self.evaluate()
 
             # threads = [Thread(target=client.train)
             #            for client in self.selected_clients]
