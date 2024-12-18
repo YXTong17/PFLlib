@@ -1,5 +1,4 @@
 # fmt: off
-
 # PFLlib: Personalized Federated Learning Algorithm Library
 # Copyright (C) 2021  Jianqing Zhang
 
@@ -18,18 +17,23 @@
 # 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 
 import time
-from flcore.clients.clientntd import clientNTD
+import torch
+import torch.nn as nn
+from flcore.clients.clientlc_new import clientLC_New
 from flcore.servers.serverbase import Server
 from threading import Thread
 
 
-class FedNTD(Server):
+class FedLC_New(Server):
     def __init__(self, args, times):
         super().__init__(args, times)
 
+        self.feature_dim = list(args.model.head.parameters())[0].shape[1]
+        args.head = nn.Linear(self.feature_dim, args.num_classes, bias=False).to(args.device)
+
         # select slow clients
         self.set_slow_clients()
-        self.set_clients(clientNTD)
+        self.set_clients(clientLC_New)
 
         print(f"\nJoin ratio / total clients: {self.join_ratio} / {self.num_clients}")
         print("Finished creating server and clients.")
@@ -51,7 +55,7 @@ class FedNTD(Server):
 
             for client in self.selected_clients:
                 client.train()
-            
+                
             if i % self.eval_gap == 0:
                 print(f"\n-------------Round number: {i}-------------")
                 print("\nEvaluate fine-tuned local model")
@@ -85,11 +89,7 @@ class FedNTD(Server):
 
         if self.num_new_clients > 0:
             self.eval_new_clients = True
-            self.set_new_clients(clientNTD)
+            self.set_new_clients(clientLC_New)
             print(f"\n-------------Fine tuning round-------------")
             print("\nEvaluate new clients")
             self.evaluate()
-
-    def add_parameters(self, _, client_model):
-        for server_param, client_param in zip(self.global_model.parameters(), client_model.parameters()):
-            server_param.data += client_param.data.clone() / self.num_join_clients

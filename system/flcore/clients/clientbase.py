@@ -96,7 +96,7 @@ class Client(object):
             param.data = new_param.data.clone()
 
     def test_metrics(self):
-        testloaderfull = self.load_test_data(batch_size=128)
+        testloaderfull = self.load_test_data(batch_size=64)
         # self.model = self.load_model('model')
         # self.model.to(self.device)
         self.model.eval()

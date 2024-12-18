@@ -1,3 +1,5 @@
+# fmt: off
+
 # PFLlib: Personalized Federated Learning Algorithm Library
 # Copyright (C) 2021  Jianqing Zhang
 
@@ -34,13 +36,13 @@ class FedLC(Server):
         self.set_slow_clients()
         self.set_clients(clientLC)
 
-        sample_per_class = torch.zeros(args.num_classes).to(args.device)
-        for client in self.clients:
-            for y in range(args.num_classes):
-                sample_per_class[y] += client.sample_per_class[y]
-        val = args.tau * sample_per_class ** (-1/4)
-        for client in self.clients:
-            client.calibration = torch.tile(val, (args.batch_size, 1))
+        # sample_per_class = torch.zeros(args.num_classes).to(args.device)
+        # for client in self.clients:
+        #     for y in range(args.num_classes):
+        #         sample_per_class[y] += client.sample_per_class[y]
+        # val = args.tau * sample_per_class ** (-1/4)
+        # for client in self.clients:
+        #     client.calibration = torch.tile(val, (args.batch_size, 1))
 
         print(f"\nJoin ratio / total clients: {self.join_ratio} / {self.num_clients}")
         print("Finished creating server and clients.")
@@ -62,6 +64,11 @@ class FedLC(Server):
 
             for client in self.selected_clients:
                 client.train()
+                
+            if i % self.eval_gap == 0:
+                print(f"\n-------------Round number: {i}-------------")
+                print("\nEvaluate fine-tuned local model")
+                self.evaluate()
 
             # threads = [Thread(target=client.train)
             #            for client in self.selected_clients]

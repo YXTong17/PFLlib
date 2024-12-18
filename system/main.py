@@ -28,7 +28,7 @@ import numpy as np
 import torchvision
 import logging
 
-from flcore.servers.serverfgac import FedFGAC
+from flcore.servers.serverfgac import FedFGAC, FedFGAC_NTD
 
 from flcore.servers.serveravg import FedAvg
 from flcore.servers.serverpFedMe import pFedMe
@@ -213,6 +213,18 @@ def run(args):
             args.model.fc = nn.Identity()
             args.model = BaseHeadSplit(args.model, args.head)
             server = FedFGAC(args, i)
+        
+        elif args.algorithm == "FedFGAC_NTD":
+            args.head = copy.deepcopy(args.model.fc)
+            args.model.fc = nn.Identity()
+            args.model = BaseHeadSplit(args.model, args.head)
+            server = FedFGAC_NTD(args, i)
+        
+        elif args.algorithm == "FedLC_New":
+            args.head = copy.deepcopy(args.model.fc)
+            args.model.fc = nn.Identity()
+            args.model = BaseHeadSplit(args.model, args.head)
+            server = FedLC(args, i)
 
         elif args.algorithm == "Local":
             server = Local(args, i)
@@ -435,7 +447,7 @@ if __name__ == "__main__":
     parser.add_argument('-eg', "--eval_gap", type=int, default=1,
                         help="Rounds gap for evaluation")
     parser.add_argument('-sfn', "--save_folder_name", type=str, default='items')
-    parser.add_argument('-ab', "--auto_break", type=bool, default=True)
+    parser.add_argument('-ab', "--auto_break", type=bool, default=False)
     parser.add_argument('-dlg', "--dlg_eval", type=bool, default=False)
     parser.add_argument('-dlgg', "--dlg_gap", type=int, default=100)
     parser.add_argument('-bnpc', "--batch_num_per_client", type=int, default=2)

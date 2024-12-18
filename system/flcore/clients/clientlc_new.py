@@ -1,5 +1,3 @@
-# fmt: off
-
 # PFLlib: Personalized Federated Learning Algorithm Library
 # Copyright (C) 2021  Jianqing Zhang
 
@@ -18,13 +16,15 @@
 # 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 
 import copy
-import torch
-import numpy as np
 import time
+
+import numpy as np
+import torch
+import torch.nn.functional as F
 from flcore.clients.clientbase import Client
 
 
-class clientLC(Client):
+class clientLC_New(Client):
     def __init__(self, args, id, train_samples, test_samples, **kwargs):
         super().__init__(args, id, train_samples, test_samples, **kwargs)
 
@@ -33,14 +33,13 @@ class clientLC(Client):
         for x, y in trainloader:
             for yy in y:
                 self.sample_per_class[yy.item()] += 1
-        self.calibration = args.tau * self.sample_per_class ** (-1/4)
-        self.calibration = torch.tile(self.calibration, (args.batch_size, 1))
+        self.calibration = F.normalize(self.sample_per_class, p=1, dim=0)
 
     def train(self):
         trainloader = self.load_train_data()
         # self.model.to(self.device)
         self.model.train()
-        
+
         start_time = time.time()
 
         max_local_epochs = self.local_epochs
@@ -57,7 +56,7 @@ class clientLC(Client):
                 if self.train_slow:
                     time.sleep(0.1 * np.abs(np.random.rand()))
                 output = self.model(x)
-                loss = self.loss(output - self.calibration, y)
+                loss = self.loss(output * self.calibration, y)
                 # output = self.model(x)
                 # loss = self.logits_calibration(feat, y)
                 self.optimizer.zero_grad()
@@ -69,9 +68,8 @@ class clientLC(Client):
         if self.learning_rate_decay:
             self.learning_rate_scheduler.step()
 
-        self.train_time_cost['num_rounds'] += 1
-        self.train_time_cost['total_cost'] += time.time() - start_time
-
+        self.train_time_cost["num_rounds"] += 1
+        self.train_time_cost["total_cost"] += time.time() - start_time
 
     def logits_calibration(self, feat, y):
         logits = self.model.head(feat)

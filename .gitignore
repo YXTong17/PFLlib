@@ -3,4 +3,6 @@
 dataset/Cifar10
 dataset/Cifar100
 
+system/models
+results
 outputs
