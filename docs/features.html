@@ -156,6 +156,7 @@
             <nav>
                 <a href="index.html">Home</a>
                 <a href="docs.html">Documentation</a>
+                <a href="benchmark.html">Benchmark</a>
                 <a href="about.html">About</a>
                 <a href="https://github.com/TsingZ0/PFLlib" id="github-stars" class="github-stars">★ Star 1500</a>
             </nav>
@@ -169,24 +170,23 @@
                 <li><a href="data.html">Datasets & Scenarios</a></li>
                 <li><a href="model.html">Models</a></li>
                 <li><a href="extend.html">How to Extend</a></li>
-                <li><a href="benchmark.html">Benchmark Results</a></li>
                 <li><a href="features.html">Other Features</a></li>
             </ul>
         </div>
         <div class="content">
             <section id="features">
-                <h2>Privacy Evaluation</h2>
+                <h2 id="privacy-evaluation">Privacy Evaluation</h2>
                 <p>You can use the following privacy evaluation methods to assess the privacy-preserving capabilities of tFL/pFL algorithms in PFLlib. Please refer to <code>./system/flcore/servers/serveravg.py</code> for an example. Note that most of these evaluations are not typically considered in the original papers. <em>We encourage you to add more attacks and metrics for privacy evaluation.</em></p>
                 <h4>Currently supported attacks:</h4>
                 <ul>
-                    <li><a href="https://papers.nips.cc/paper_files/paper/2019/hash/60a6c4002cc7b29142def8871531281a-Abstract.html">DLG (Deep Leakage from Gradients)</a> attack</li>
+                    <li><a href="https://www.ijcai.org/proceedings/2022/0324.pdf">DLG (Deep Leakage from Gradients)</a> attack</li>
                 </ul>
                 <h4>Currently supported metrics:</h4>
                 <ul>
                     <li><strong>PSNR (Peak Signal-to-Noise Ratio)</strong>: an objective metric for image evaluation, defined as the logarithm of the ratio of the squared maximum value of RGB image fluctuations to the Mean Squared Error (MSE) between two images. A lower PSNR score indicates better privacy-preserving capabilities.</li>
                 </ul>
 
-                <h2>Systematical research support</h2>
+                <h2 id="systematical-research-supprot">Systematical research support</h2>
                 <p>To simulate Federated Learning (FL) under practical conditions, such as <strong>client dropout</strong>, <strong>slow trainers</strong>, <strong>slow senders</strong>, and <strong>network TTL (Time-To-Live)</strong>, you can adjust the following parameters:</p>
                 <ul>
                 <li><code>-cdr</code>: Dropout rate for clients. Clients are randomly dropped at each training round based on this rate.</li>
