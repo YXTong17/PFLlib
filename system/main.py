@@ -28,9 +28,15 @@ import numpy as np
 import torchvision
 import logging
 
-from flcore.servers.serverfgac import FedFGAC, FedFGAC_NTD
+from flcore.servers.serverfgac import (
+    FedFGAC,
+    FedFGAC_NTD,
+    FedFGAC_MCD,
+    FedFGAC_Frozen,
+    FedFGAC_CC,
+)
 
-from flcore.servers.serveravg import FedAvg
+from flcore.servers.serveravg import FedAvg, FedAvg_Frozen
 from flcore.servers.serverpFedMe import pFedMe
 from flcore.servers.serverperavg import PerAvg
 from flcore.servers.serverprox import FedProx
@@ -219,6 +225,30 @@ def run(args):
             args.model.fc = nn.Identity()
             args.model = BaseHeadSplit(args.model, args.head)
             server = FedFGAC_NTD(args, i)
+            
+        elif args.algorithm == "FedFGAC_MCD":
+            args.head = copy.deepcopy(args.model.fc)
+            args.model.fc = nn.Identity()
+            args.model = BaseHeadSplit(args.model, args.head)
+            server = FedFGAC_MCD(args, i)
+            
+        elif args.algorithm == "FedAvg_Frozen":
+            args.head = copy.deepcopy(args.model.fc)
+            args.model.fc = nn.Identity()
+            args.model = BaseHeadSplit(args.model, args.head)
+            server = FedAvg_Frozen(args, i)
+            
+        elif args.algorithm == "FedFGAC_Frozen":
+            args.head = copy.deepcopy(args.model.fc)
+            args.model.fc = nn.Identity()
+            args.model = BaseHeadSplit(args.model, args.head)
+            server = FedFGAC_Frozen(args, i)
+            
+        elif args.algorithm == "FedFGAC_CC":
+            args.head = copy.deepcopy(args.model.fc)
+            args.model.fc = nn.Identity()
+            args.model = BaseHeadSplit(args.model, args.head)
+            server = FedFGAC_CC(args, i)
         
         elif args.algorithm == "FedLC_New":
             args.head = copy.deepcopy(args.model.fc)
