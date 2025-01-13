@@ -1,8 +1,8 @@
 *__pycache__*
 
-dataset/Cifar10
-dataset/Cifar100
+dataset
 
 system/models
+system/temp
 results
 outputs

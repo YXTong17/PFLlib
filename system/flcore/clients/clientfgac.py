@@ -411,8 +411,8 @@ class clientFGAC_CC(Client):
                     self.num_classes, self.num_classes, offset=1
                 )
                 upper_distances = distances[triu_indices[0], triu_indices[1]]
-                # penalty = F.relu(1000 - upper_distances).mean()
-                penalty = -upper_distances.mean()
+                penalty = F.relu(100 - upper_distances).mean()
+                # penalty = -upper_distances.mean()
                 loss += self.alpha * penalty
 
                 self.optimizer.zero_grad()

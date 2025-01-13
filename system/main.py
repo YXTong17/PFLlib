@@ -28,6 +28,7 @@ import numpy as np
 import torchvision
 import logging
 
+from flcore.servers.servercc import FedCC
 from flcore.servers.serverfgac import (
     FedFGAC,
     FedFGAC_NTD,
@@ -35,6 +36,8 @@ from flcore.servers.serverfgac import (
     FedFGAC_Frozen,
     FedFGAC_CC,
 )
+from flcore.servers.servertgcr import FedTGCR
+from flcore.servers.servertgp import FedTGP
 
 from flcore.servers.serveravg import FedAvg, FedAvg_Frozen
 from flcore.servers.serverpFedMe import pFedMe
@@ -51,7 +54,7 @@ from flcore.servers.serverrep import FedRep
 from flcore.servers.serverphp import FedPHP
 from flcore.servers.serverbn import FedBN
 from flcore.servers.serverrod import FedROD
-from flcore.servers.serverproto import FedProto
+from flcore.servers.serverproto import FedProto, FedProto_CR
 from flcore.servers.serverdyn import FedDyn
 from flcore.servers.servermoon import MOON
 from flcore.servers.serverbabu import FedBABU
@@ -214,6 +217,12 @@ def run(args):
             args.model = BaseHeadSplit(args.model, args.head)
             server = FedAvg(args, i)
             
+        elif args.algorithm == "FedCC":
+            args.head = copy.deepcopy(args.model.fc)
+            args.model.fc = nn.Identity()
+            args.model = BaseHeadSplit(args.model, args.head)
+            server = FedCC(args, i)
+            
         elif args.algorithm == "FedFGAC":
             args.head = copy.deepcopy(args.model.fc)
             args.model.fc = nn.Identity()
@@ -315,6 +324,24 @@ def run(args):
             args.model.fc = nn.Identity()
             args.model = BaseHeadSplit(args.model, args.head)
             server = FedProto(args, i)
+            
+        elif args.algorithm == "FedProto_CR":
+            args.head = copy.deepcopy(args.model.fc)
+            args.model.fc = nn.Identity()
+            args.model = BaseHeadSplit(args.model, args.head)
+            server = FedProto_CR(args, i)
+            
+        elif args.algorithm == "FedTGCR":
+            args.head = copy.deepcopy(args.model.fc)
+            args.model.fc = nn.Identity()
+            args.model = BaseHeadSplit(args.model, args.head)
+            server = FedTGCR(args, i)
+            
+        elif args.algorithm == "FedTGP":
+            args.head = copy.deepcopy(args.model.fc)
+            args.model.fc = nn.Identity()
+            args.model = BaseHeadSplit(args.model, args.head)
+            server = FedTGP(args, i)
 
         elif args.algorithm == "FedDyn":
             server = FedDyn(args, i)
@@ -476,7 +503,7 @@ if __name__ == "__main__":
                         help="Running times")
     parser.add_argument('-eg', "--eval_gap", type=int, default=1,
                         help="Rounds gap for evaluation")
-    parser.add_argument('-sfn', "--save_folder_name", type=str, default='items')
+    parser.add_argument('-sfn', "--save_folder_name", type=str, default='temp')
     parser.add_argument('-ab', "--auto_break", type=bool, default=False)
     parser.add_argument('-dlg', "--dlg_eval", type=bool, default=False)
     parser.add_argument('-dlgg', "--dlg_gap", type=int, default=100)
@@ -548,6 +575,8 @@ if __name__ == "__main__":
     # FedDBE
     parser.add_argument('-mo', "--momentum", type=float, default=0.1)
     parser.add_argument('-klw', "--kl_weight", type=float, default=0.0)
+    # FedTGP
+    parser.add_argument('-mart', "--margin_threthold", type=float, default=100.0)
 
 
     args = parser.parse_args()

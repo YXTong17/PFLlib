@@ -34,7 +34,6 @@ class clientProto(Client):
 
         self.lamda = args.lamda
 
-
     def train(self):
         trainloader = self.load_train_data()
         start_time = time.time()
@@ -86,9 +85,8 @@ class clientProto(Client):
         if self.learning_rate_decay:
             self.learning_rate_scheduler.step()
 
-        self.train_time_cost['num_rounds'] += 1
-        self.train_time_cost['total_cost'] += time.time() - start_time
-
+        self.train_time_cost["num_rounds"] += 1
+        self.train_time_cost["total_cost"] += time.time() - start_time
 
     def set_protos(self, global_protos):
         self.global_protos = global_protos
@@ -123,7 +121,7 @@ class clientProto(Client):
 
         test_acc = 0
         test_num = 0
-        
+
         if self.global_protos is not None:
             with torch.no_grad():
                 for x, y in testloaderfull:
@@ -134,7 +132,9 @@ class clientProto(Client):
                     y = y.to(self.device)
                     rep = self.model.base(x)
 
-                    output = float('inf') * torch.ones(y.shape[0], self.num_classes).to(self.device)
+                    output = float("inf") * torch.ones(y.shape[0], self.num_classes).to(
+                        self.device
+                    )
                     for i, r in enumerate(rep):
                         for j, pro in self.global_protos.items():
                             if type(pro) != type([]):
@@ -198,3 +198,71 @@ def agg_func(protos):
             protos[label] = proto_list[0]
 
     return protos
+
+
+class clientProto_CR(Client):
+    def __init__(self, args, id, train_samples, test_samples, **kwargs):
+        super().__init__(args, id, train_samples, test_samples, **kwargs)
+
+        self.protos = None
+        self.global_protos = None
+        self.loss_mse = nn.MSELoss()
+
+        self.lamda = args.lamda
+
+    def train(self):
+        trainloader = self.load_train_data()
+        start_time = time.time()
+
+        # self.model.to(self.device)
+        self.model.train()
+
+        max_local_epochs = self.local_epochs
+        if self.train_slow:
+            max_local_epochs = np.random.randint(1, max_local_epochs // 2)
+
+        protos = defaultdict(list)
+        for epoch in range(max_local_epochs):
+            for i, (x, y) in enumerate(trainloader):
+                if type(x) == type([]):
+                    x[0] = x[0].to(self.device)
+                else:
+                    x = x.to(self.device)
+                y = y.to(self.device)
+                if self.train_slow:
+                    time.sleep(0.1 * np.abs(np.random.rand()))
+                rep = self.model.base(x)
+                output = self.model.head(rep)
+                loss = self.loss(output, y)
+
+                if self.global_protos is not None:
+                    loss += (
+                        self.loss_mse(self.model.head.weight, self.global_protos)
+                        * self.lamda
+                    )
+
+                for i, yy in enumerate(y):
+                    y_c = yy.item()
+                    protos[y_c].append(rep[i, :].detach().data)
+
+                self.optimizer.zero_grad()
+                loss.backward()
+                self.optimizer.step()
+
+        # self.model.cpu()
+        # rep = self.model.base(x)
+        # print(torch.sum(rep!=0).item() / rep.numel())
+
+        # self.collect_protos()
+        self.protos = agg_func(protos)
+
+        if self.learning_rate_decay:
+            self.learning_rate_scheduler.step()
+
+        self.train_time_cost["num_rounds"] += 1
+        self.train_time_cost["total_cost"] += time.time() - start_time
+
+    def set_protos(self, global_protos):
+        protos_list = [global_protos[label] for label in range(len(global_protos))]
+        self.global_protos = torch.stack(protos_list, dim=0)
+        # print(self.global_protos.shape)
