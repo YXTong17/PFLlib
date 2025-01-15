@@ -82,9 +82,14 @@ class Client(object):
         test_data = read_client_data(self.dataset, self.id, is_train=False)
         return DataLoader(test_data, batch_size, drop_last=False, shuffle=True)
         
+    # def set_parameters(self, model):
+    #     for new_param, old_param in zip(model.parameters(), self.model.parameters()):
+    #         old_param.data = new_param.data.clone()
+            
     def set_parameters(self, model):
-        for new_param, old_param in zip(model.parameters(), self.model.parameters()):
-            old_param.data = new_param.data.clone()
+        for (nn, np), (on, op) in zip(model.named_parameters(), self.model.named_parameters()):
+            if 'bn' not in nn:
+                op.data = np.data.clone()
 
     def clone_model(self, model, target):
         for param, target_param in zip(model.parameters(), target.parameters()):

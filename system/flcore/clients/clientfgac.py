@@ -29,9 +29,7 @@ class clientFGAC(Client):
     def __init__(self, args, id, train_samples, test_samples, **kwargs):
         super().__init__(args, id, train_samples, test_samples, **kwargs)
 
-        self.optimizer = torch.optim.SGD(
-            self.model.parameters(), lr=self.learning_rate, weight_decay=1e-3
-        )
+        self.optimizer = torch.optim.SGD(self.model.parameters(), lr=self.learning_rate)
         self.learning_rate_scheduler = torch.optim.lr_scheduler.ExponentialLR(
             optimizer=self.optimizer, gamma=args.learning_rate_decay_gamma
         )
@@ -84,9 +82,7 @@ class clientFGAC_NTD(Client):
     def __init__(self, args, id, train_samples, test_samples, **kwargs):
         super().__init__(args, id, train_samples, test_samples, **kwargs)
 
-        self.optimizer = torch.optim.SGD(
-            self.model.parameters(), lr=self.learning_rate, weight_decay=1e-3
-        )
+        self.optimizer = torch.optim.SGD(self.model.parameters(), lr=self.learning_rate)
         self.learning_rate_scheduler = torch.optim.lr_scheduler.ExponentialLR(
             optimizer=self.optimizer, gamma=args.learning_rate_decay_gamma
         )
@@ -179,9 +175,7 @@ class clientFGAC_MCD(Client):
     def __init__(self, args, id, train_samples, test_samples, **kwargs):
         super().__init__(args, id, train_samples, test_samples, **kwargs)
 
-        self.optimizer = torch.optim.SGD(
-            self.model.parameters(), lr=self.learning_rate, weight_decay=1e-3
-        )
+        self.optimizer = torch.optim.SGD(self.model.parameters(), lr=self.learning_rate)
         self.learning_rate_scheduler = torch.optim.lr_scheduler.ExponentialLR(
             optimizer=self.optimizer, gamma=args.learning_rate_decay_gamma
         )
@@ -273,9 +267,7 @@ class clientFGAC_Frozen(Client):
     def __init__(self, args, id, train_samples, test_samples, **kwargs):
         super().__init__(args, id, train_samples, test_samples, **kwargs)
 
-        self.optimizer = torch.optim.SGD(
-            self.model.parameters(), lr=self.learning_rate, weight_decay=1e-3
-        )
+        self.optimizer = torch.optim.SGD(self.model.parameters(), lr=self.learning_rate)
         self.learning_rate_scheduler = torch.optim.lr_scheduler.ExponentialLR(
             optimizer=self.optimizer, gamma=args.learning_rate_decay_gamma
         )
@@ -355,9 +347,7 @@ class clientFGAC_CC(Client):
     def __init__(self, args, id, train_samples, test_samples, **kwargs):
         super().__init__(args, id, train_samples, test_samples, **kwargs)
 
-        self.optimizer = torch.optim.SGD(
-            self.model.parameters(), lr=self.learning_rate, weight_decay=1e-3
-        )
+        self.optimizer = torch.optim.SGD(self.model.parameters(), lr=self.learning_rate)
         self.learning_rate_scheduler = torch.optim.lr_scheduler.ExponentialLR(
             optimizer=self.optimizer, gamma=args.learning_rate_decay_gamma
         )
