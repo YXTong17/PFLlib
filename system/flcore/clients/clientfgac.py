@@ -399,7 +399,7 @@ class clientFGAC_CC(Client):
                 )
                 upper_distances = distances[triu_indices[0], triu_indices[1]]
                 penalty = -torch.log(upper_distances.mean())
-                # penalty = F.relu(500 - upper_distances).mean()
+                # penalty = F.relu(100 - upper_distances).mean()
                 # penalty = -upper_distances.mean()
                 loss += self.alpha * penalty
 

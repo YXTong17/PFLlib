@@ -1,7 +1,7 @@
 import torch.nn as nn
 
 
-def replace_bn_with_gn(model, num_groups=2, device="cuda"):
+def replace_bn_with_gn(model, num_groups=32, device="cuda"):
     """
     Replace all BatchNorm2d layers in a model with GroupNorm.
 

@@ -143,7 +143,7 @@ def run(args):
         
         elif model_str == "ResNet18":
             args.model = torchvision.models.resnet18(pretrained=False, num_classes=args.num_classes).to(args.device)
-            # replace_bn_with_gn(args.model, num_groups=32, device=args.device)
+            # replace_bn_with_gn(args.model, num_groups=2, device=args.device)
             
             # args.model = torchvision.models.resnet18(pretrained=True).to(args.device)
             # feature_dim = list(args.model.fc.parameters())[0].shape[1]

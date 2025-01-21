@@ -88,7 +88,8 @@ class clientCC(Client):
                     self.num_classes, self.num_classes, offset=1
                 )
                 upper_distances = distances[triu_indices[0], triu_indices[1]]
-                penalty = F.relu(100 - upper_distances).mean()
+                penalty = -torch.log(upper_distances.mean())
+                # penalty = F.relu(100 - upper_distances).mean()
                 # penalty = -upper_distances.mean()
                 loss += self.alpha * penalty
 
