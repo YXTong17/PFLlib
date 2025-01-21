@@ -7,21 +7,25 @@ cd ./system || exit
 #   -lr 0.003 -lbs 32 -ls 3 -nc 20 -gr 400 -m CNN -did 0 \
 #   > ../outputs/lr-0.01_lbs-32_ls-3/FedAvg/Cifar10_FedAvg_CNN.out 2>&1 &
 
+# nohup python -u main.py -algo FedAvg -data Cifar10 -ncl 10 \
+#   -lr 0.1 -lbs 50 -ls 5 -nc 20 -gr 400 -m ResNet18 -did 0 \
+#   > ../outputs/lr-0.1_lbs-50_ls-5/FedAvg/Cifar10_FedAvg_ResNet18.out 2>&1 &
+
 # nohup python -u main.py -algo FedAvg -data Cifar100 -ncl 100 \
 #   -lr 0.003 -lbs 32 -ls 3 -nc 20 -gr 400 -m CNN -did 0 \
 #   > ../outputs/lr-0.01_lbs-32_ls-3/FedAvg/Cifar100_FedAvg_CNN.out 2>&1 &
 
 
 # nohup python -u main.py -algo FedAvg -data Cifar100 -ncl 100 \
-#   -lr 0.005 -lbs 10 -ls 1 -gr 400 -m ResNet18 -did 0 \
-#   > ../outputs/lr-0.005_lbs-10/FedAvg/Cifar100_FedAvg_ResNet18-GN.out 2>&1 &
+#   -lr 0.1 -lbs 50 -ls 5 -gr 2000 -m ResNet18 -did 0 \
+#   > ../outputs/lr-0.1_lbs-50_ls-5/FedAvg/Cifar100_FedAvg_wd0.001_ResNet18-BN.out 2>&1 &
 
 
 
 #################### FedFGAC ####################
 # nohup python -u main.py -algo FedFGAC -data Cifar10 -ncl 10 \
 #   -lr 0.005 -lbs 10 -ls 1 -gr 400 -m CNN -did 0 \
-#   > ../outputs/lr-0.005_lbs-10/FedFGAC/Cifar10_FedFGAC_Log_CNN.out 2>&1 &
+#   > ../outputs/lr-0.005_lbs-10/FedFGAC/Cifar10_FedFGAC_Log_CNN_test.out 2>&1 &
 
 # nohup python -u main.py -algo FedFGAC -data Cifar100 -ncl 100 \
 #   -lr 0.005 -lbs 10 -ls 1 -gr 400 -m CNN -did 0 \
@@ -134,14 +138,22 @@ cd ./system || exit
 #   -lr 0.005 -lbs 10 -ls 1 -gr 400 -m CNN -did 0 -al 1 \
 #   > ../outputs/lr-0.005_lbs-10/FedFGAC_CC/Cifar10_FedFGAC_CC-L1-2000_al1_Log_CNN.out 2>&1 &
 
+# nohup python -u main.py -algo FedFGAC_CC -data Cifar10 -ncl 10 \
+#   -lr 0.005 -lbs 10 -ls 1 -gr 400 -m CNN -did 0 -al 100 \
+#   > ../outputs/lr-0.005_lbs-10/FedFGAC_CC/Cifar10_FedFGAC_CC_-logL2_al100_Log_CNN.out 2>&1 &
+
+# nohup python -u main.py -algo FedFGAC_CC -data Cifar10 -ncl 10 \
+#   -lr 0.1 -lbs 50 -ls 5 -gr 400 -m ResNet18 -did 0 -al 1 \
+#   > ../outputs/lr-0.1_lbs-50_ls-5/FedFGAC_CC/Cifar10_FedFGAC_CC_-logL1_al1_Log_ResNet18-GN.out 2>&1 &
+
 # nohup python -u main.py -algo FedFGAC_CC -data Cifar100 -ncl 100 \
 #   -lr 0.005 -lbs 10 -ls 1 -gr 400 -m CNN -did 0 -al 1 \
 #   > ../outputs/lr-0.005_lbs-10/FedFGAC_CC/Cifar100_FedFGAC_CC_L1-100_al1_Log_CNN.out 2>&1 &
 
 
-nohup python -u main.py -algo FedFGAC_CC -data Cifar100 -ncl 100 \
-  -lr 0.005 -lbs 10 -ls 1 -gr 400 -m ResNet18 -did 0 -al 1 \
-  > ../outputs/lr-0.005_lbs-10/FedFGAC_CC/Cifar100_FedFGAC_CC_L1-100_al1_Log_ResNet18-GN.out 2>&1 &
+# nohup python -u main.py -algo FedFGAC_CC -data Cifar100 -ncl 100 \
+#   -lr 0.1 -lbs 50 -ls 5 -gr 2000 -m ResNet18 -did 0 -al 10 \
+#   > ../outputs/lr-0.1_lbs-50_ls-5/FedFGAC_CC/Cifar100_FedFGAC_CC_-logL1_wd0.001_al10_Log_ResNet18-BN.out 2>&1 &
 
 
 
@@ -186,17 +198,21 @@ nohup python -u main.py -algo FedFGAC_CC -data Cifar100 -ncl 100 \
 
 #################### FedDyn ####################
 # nohup python -u main.py -algo FedDyn -data Cifar10 -ncl 10 \
-#   -lr 0.005 -lbs 10 -ls 1 -gr 400 -m CNN -did 0 -al 0.1 \
-#   > ../outputs/lr-0.005_lbs-10/FedDyn/Cifar10_FedDyn_al-0.1_CNN.out 2>&1 &
+#   -lr 0.005 -lbs 10 -ls 1 -gr 400 -m CNN -did 0 -al 0.01 \
+#   > ../outputs/lr-0.005_lbs-10/FedDyn/Cifar10_FedDyn_al-0.01_CNN.out 2>&1 &
+
+# nohup python -u main.py -algo FedDyn -data Cifar10 -ncl 10 \
+#   -lr 0.1 -lbs 50 -ls 5 -gr 400 -m ResNet18 -did 0 -al 0.01 \
+#   > ../outputs/lr-0.1_lbs-50_ls-5/FedDyn/Cifar10_FedDyn_al-0.01_ResNet18-GN.out 2>&1 &
 
 # nohup python -u main.py -algo FedDyn -data Cifar100 -ncl 100 \
 #   -lr 0.005 -lbs 10 -ls 1 -gr 400 -m CNN -did 0 -al 0.1 \
 #   > ../outputs/lr-0.005_lbs-10/FedDyn/Cifar100_FedDyn_al-0.1_CNN.out 2>&1 &
 
 
-# nohup python -u main.py -algo FedDyn -data Cifar100 -ncl 100 \
-#   -lr 0.005 -lbs 10 -ls 1 -gr 400 -m ResNet18 -did 0 -al 0.1 \
-#   > ../outputs/lr-0.005_lbs-10/FedDyn/Cifar100_FedDyn_al-0.1_ResNet18-GN.out 2>&1 &
+nohup python -u main.py -algo FedDyn -data Cifar100 -ncl 100 \
+  -lr 0.1 -lbs 50 -ls 5 -gr 2000 -m ResNet18 -did 0 -al 0.01 \
+  > ../outputs/lr-0.1_lbs-50_ls-5/FedDyn/Cifar100_FedDyn-BN_wd0.00001_al-0.01_ResNet18-BN.out 2>&1 &
 
 
 
@@ -234,3 +250,17 @@ nohup python -u main.py -algo FedFGAC_CC -data Cifar100 -ncl 100 \
 # nohup python -u main.py -algo FedTGP -data Cifar10 -ncl 10 \
 #   -lr 0.005 -lbs 10 -ls 1 -gr 400 -m CNN -did 0 -se 100 -lam 0.1 -mart 100 \
 #   > ../outputs/lr-0.005_lbs-10/FedTGP/Cifar10_FedTGP_lam0.1.out 2>&1 &
+
+
+
+
+
+
+
+
+
+
+#################### FedALA ####################
+# nohup python -u main.py -algo FedALA -data Cifar10 -ncl 10 \
+#   -lr 0.1 -lbs 50 -ls 5 -nc 20 -gr 400 -m ResNet18 -did 0 -et 1 \
+#   > ../outputs/lr-0.1_lbs-50_ls-5/FedALA/Cifar10_FedALA_ResNet18.out 2>&1 &

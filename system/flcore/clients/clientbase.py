@@ -62,7 +62,7 @@ class Client(object):
         self.send_time_cost = {'num_rounds': 0, 'total_cost': 0.0}
 
         self.loss = nn.CrossEntropyLoss()
-        self.optimizer = torch.optim.SGD(self.model.parameters(), lr=self.learning_rate)
+        self.optimizer = torch.optim.SGD(self.model.parameters(), lr=self.learning_rate, weight_decay=0.00001)
         self.learning_rate_scheduler = torch.optim.lr_scheduler.ExponentialLR(
             optimizer=self.optimizer, 
             gamma=args.learning_rate_decay_gamma

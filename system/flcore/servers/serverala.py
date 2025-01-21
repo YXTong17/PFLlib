@@ -35,14 +35,13 @@ class FedALA(Server):
         # self.load_model()
         self.Budget = []
 
-
     def train(self):
-        for i in range(self.global_rounds+1):
+        for i in range(self.global_rounds + 1):
             s_t = time.time()
             self.selected_clients = self.select_clients()
             self.send_models()
 
-            if i%self.eval_gap == 0:
+            if i % self.eval_gap == 0:
                 print(f"\n-------------Round number: {i}-------------")
                 print("\nEvaluate global model")
                 self.evaluate()
@@ -50,20 +49,27 @@ class FedALA(Server):
             for client in self.selected_clients:
                 client.train()
 
+            if i % self.eval_gap == 0:
+                print(f"\n-------------Round number: {i}-------------")
+                print("\nEvaluate fine-tuned local model")
+                self.evaluate()
+
             # threads = [Thread(target=client.train)
             #            for client in self.selected_clients]
             # [t.start() for t in threads]
             # [t.join() for t in threads]
 
             self.receive_models()
-            if self.dlg_eval and i%self.dlg_gap == 0:
+            if self.dlg_eval and i % self.dlg_gap == 0:
                 self.call_dlg(i)
             self.aggregate_parameters()
 
             self.Budget.append(time.time() - s_t)
-            print('-'*25, 'time cost', '-'*25, self.Budget[-1])
+            print("-" * 25, "time cost", "-" * 25, self.Budget[-1])
 
-            if self.auto_break and self.check_done(acc_lss=[self.rs_test_acc], top_cnt=self.top_cnt):
+            if self.auto_break and self.check_done(
+                acc_lss=[self.rs_test_acc], top_cnt=self.top_cnt
+            ):
                 break
 
         print("\nBest accuracy.")
@@ -71,7 +77,7 @@ class FedALA(Server):
         #     self.rs_train_acc), min(self.rs_train_loss))
         print(max(self.rs_test_acc))
         print("\nAverage time cost per round.")
-        print(sum(self.Budget[1:])/len(self.Budget[1:]))
+        print(sum(self.Budget[1:]) / len(self.Budget[1:]))
 
         self.save_results()
         self.save_global_model()
@@ -83,9 +89,8 @@ class FedALA(Server):
             print("\nEvaluate new clients")
             self.evaluate()
 
-
     def send_models(self):
-        assert (len(self.clients) > 0)
+        assert len(self.clients) > 0
 
         for client in self.clients:
             client.local_initialization(self.global_model)

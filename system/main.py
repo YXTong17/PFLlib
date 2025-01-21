@@ -88,12 +88,16 @@ from flcore.trainmodel.transformer import *
 
 from utils.result_utils import average_data
 from utils.mem_utils import MemReporter
+from utils.model_utils import replace_bn_with_gn
 
 logger = logging.getLogger()
 logger.setLevel(logging.ERROR)
 
 warnings.simplefilter("ignore")
 torch.manual_seed(0)
+torch.cuda.manual_seed_all(0)
+np.random.seed(0)
+torch.backends.cudnn.deterministic = True
 
 
 def run(args):
@@ -139,6 +143,7 @@ def run(args):
         
         elif model_str == "ResNet18":
             args.model = torchvision.models.resnet18(pretrained=False, num_classes=args.num_classes).to(args.device)
+            # replace_bn_with_gn(args.model, num_groups=32, device=args.device)
             
             # args.model = torchvision.models.resnet18(pretrained=True).to(args.device)
             # feature_dim = list(args.model.fc.parameters())[0].shape[1]

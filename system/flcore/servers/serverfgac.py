@@ -90,7 +90,9 @@ class FedFGAC(Server):
         # for param in self.global_model.parameters():
         #     param.data.zero_()
 
-        client_classifier_weights = torch.stack(self.uploaded_classifier_weights)
+        client_classifier_weights = torch.stack(self.uploaded_classifier_weights).to(
+            self.device
+        )
         total_classifier_weights = client_classifier_weights.sum(dim=0)
         classifier_weights = client_classifier_weights / total_classifier_weights.clamp(
             min=1e-6
@@ -108,7 +110,8 @@ class FedFGAC(Server):
                 server_param.data += client_param_update.data.clone() * w
             # 聚合最后一层全连接层
             for server_param, client_param_update in zip(
-                self.global_model.head.parameters(), client_update.head.parameters()
+                self.global_model.head.parameters(),
+                client_update.head.parameters(),
             ):
                 for class_idx, c_w in enumerate(classifier_weight):
                     server_param.data[class_idx] += (

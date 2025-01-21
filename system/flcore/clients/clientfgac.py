@@ -347,11 +347,6 @@ class clientFGAC_CC(Client):
     def __init__(self, args, id, train_samples, test_samples, **kwargs):
         super().__init__(args, id, train_samples, test_samples, **kwargs)
 
-        self.optimizer = torch.optim.SGD(self.model.parameters(), lr=self.learning_rate)
-        self.learning_rate_scheduler = torch.optim.lr_scheduler.ExponentialLR(
-            optimizer=self.optimizer, gamma=args.learning_rate_decay_gamma
-        )
-
         # 统计每类数据的数量
         train_data = read_client_data(self.dataset, self.id, is_train=True)
         labels = torch.tensor([label for _, label in train_data])
@@ -394,14 +389,17 @@ class clientFGAC_CC(Client):
                 # L1
                 weight_expanded_i = self.model.head.weight.unsqueeze(1)  # [K, 1, d]
                 weight_expanded_j = self.model.head.weight.unsqueeze(0)  # [1, K, d]
+
                 distances = torch.norm(
                     weight_expanded_i - weight_expanded_j, p=1, dim=2
                 )  # L1
+
                 triu_indices = torch.triu_indices(
                     self.num_classes, self.num_classes, offset=1
                 )
                 upper_distances = distances[triu_indices[0], triu_indices[1]]
-                penalty = F.relu(100 - upper_distances).mean()
+                penalty = -torch.log(upper_distances.mean())
+                # penalty = F.relu(500 - upper_distances).mean()
                 # penalty = -upper_distances.mean()
                 loss += self.alpha * penalty
 
@@ -409,12 +407,13 @@ class clientFGAC_CC(Client):
                 loss.backward()
                 self.optimizer.step()
 
-        print(penalty)
+        print(penalty.item(), torch.exp(-penalty).item())
 
         # self.model.cpu()
 
         if self.learning_rate_decay:
-            self.learning_rate_scheduler.step()
+            self.learning_rate_scheduler_base.step()
+            self.learning_rate_scheduler_head.step()
 
         self.train_time_cost["num_rounds"] += 1
         self.train_time_cost["total_cost"] += time.time() - start_time
